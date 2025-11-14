@@ -82,7 +82,7 @@ outputs/sysmobench__<model>__agent_based__<timestamp>/
 └── avg_score.json # Final averaged score across tasks
 ```
 
-### Use the SysCap CLI (optional)
+### Use the System Intelligence CLI (optional)
 
 To orchestrate SysMoBench alongside other benchmarks:
 
@@ -132,48 +132,6 @@ SysMoBench provides four automated phases to evaluate AI-generated TLA+ models w
 
 ![Evaluation Workflow](sysmobench_core/docs/pic/SysMoBench.png)
 
-### Reproducing Paper Results
-
-The paper uses the following metrics for evaluation:
-
-1. **Syntax Correctness**: Weighted combination (50% each) of `compilation_check` and `action_decomposition`
-2. **Runtime Correctness**: `runtime_coverage`
-3. **Conformance to System Implementation**:
-   - Non-PGo systems (spin, mutex, rwmutex, etcd, redis, xline): `trace_validation`
-   - PGo systems (raftkvs, locksvc, dqueue): `pgo_trace_validation`
-4. **Invariant Correctness**: `invariant_verification`
-
-### 1. Syntax Correctness
-
-Validates that the generated TLA+ model adheres to TLA+ grammar rules, correct operator usage, and proper module structure using the SANY Syntactic Analyzer. The evaluation includes both full-model compilation and per-action analysis to provide fine-grained feedback on syntax errors.
-
-**Available metrics:**
-- `compilation_check` - Basic TLA+ compilation checking using SANY parser
-- `action_decomposition` - Evaluate individual actions separately for better granularity
-
-### 2. Runtime Correctness
-
-Evaluates whether the syntactically correct model can execute without runtime errors. The TLC Model Checker performs bounded model checking and simulation to explore the state space without invariant checking, recording covered actions and any runtime errors encountered (e.g., type mismatches, invalid operations).
-
-**Available metrics:**
-- `runtime_check` - Model checking with TLC
-- `coverage` - TLA+ specification coverage analysis using TLC coverage statistics
-- `runtime_coverage` - Runtime coverage using simulation mode to identify successful vs error-prone actions
-
-### 3. Conformance to System Implementation
-
-Measures whether the model conforms to actual system behavior through trace validation. Execution traces collected from instrumented system code are validated against the model to verify if each trace corresponds to a valid path in the model's state space, ensuring behavioral consistency between model and implementation.
-
-**Available metrics:**
-- `trace_validation` - Full trace generation and validation pipeline
-- `pgo_trace_validation` - Full trace generation and validation pipeline (PGo version)
-
-### 4. Invariant Correctness
-
-Verifies that the model satisfies system-specific safety and liveness properties. Using expert-written invariant templates that are automatically concretized for the generated model, TLC model checking validates correctness properties such as mutual exclusion, log consistency, and progress guarantees across the explored state space.
-
-**Available metrics:**
-- `invariant_verification` - Model checking with invariants
 
 ## Adding New Systems
 
